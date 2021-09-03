@@ -230,7 +230,9 @@ NSString * const DEFAULT_IMAGE_SCALE = @"center";
     [moviePlayer setShowsPlaybackControls:controls];
     [moviePlayer setUpdatesNowPlayingInfoCenter:YES];
     if (start > 0) {
-        moviePlayer?.seek(to: CMTime(value: CMTimeValue(start), timescale: 1000))
+        CMTime time = CMTimeMake(start,1000);
+        [movie seekToTime:time];
+        //moviePlayer.player.seek(to: CMTime(value: CMTimeValue(start), timescale: 1000))
     }
     
     if(@available(iOS 11.0, *)) { [moviePlayer setEntersFullScreenWhenPlaybackBegins:YES]; }
