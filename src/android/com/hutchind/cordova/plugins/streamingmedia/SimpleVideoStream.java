@@ -152,7 +152,7 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 	
 		JSONObject dataToSend = new JSONObject();
 		 try {
-       	dataToSend.put("duration", String.valueOf(mVideoView.getCurrentPosition()));
+       	dataToSend.put("currentTime", String.valueOf(mVideoView.getCurrentPosition()));
 		dataToSend.put("message", message);
   	 	 } catch (Exception e) {
         e.printStackTrace();
