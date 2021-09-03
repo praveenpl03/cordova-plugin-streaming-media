@@ -11,7 +11,7 @@
 - (void)setBackgroundColor:(NSString *)color;
 - (void)setImage:(NSString*)imagePath withScaleType:(NSString*)imageScaleType;
 - (UIImage*)getImage: (NSString *)imageName;
-- (NSInteger)getCurrentTime:(NSInteger)position;
+- (void)getCurrentTime:(CDVInvokedUrlCommand *) command;
 - (void)startPlayer:(NSString*)uri;
 - (void)moviePlayBackDidFinish:(NSNotification*)notification;
 - (void)cleanup;
@@ -358,12 +358,16 @@ NSString * const DEFAULT_IMAGE_SCALE = @"center";
     }
 }
 
-- (NSInteger)getCurrentTime:(NSInteger)position {
+- (void)getCurrentTime:(CDVInvokedUrlCommand *) command {
+    CDVPluginResult* pluginResult;
+    
     if (moviePlayer.player != nil) {
-        return (NSInteger)CMTimeGetSeconds(moviePlayer.player.currentTime);
+        NSInteger currentTime = (NSInteger)CMTimeGetSeconds(moviePlayer.player.currentTime);
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsNSInteger:currentTime];
     } else {
-        return 0;
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"no player available"];
     }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) moviePlayBackDidFinish:(NSNotification*)notification {
