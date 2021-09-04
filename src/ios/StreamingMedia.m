@@ -362,7 +362,7 @@ NSString * const DEFAULT_IMAGE_SCALE = @"center";
     CDVPluginResult* pluginResult;
     
     if (moviePlayer.player != nil) {
-        NSInteger currentTime = (NSInteger)CMTimeGetSeconds(moviePlayer.player.currentTime);
+        NSInteger currentTime = (NSInteger)CMTimeGetSeconds(moviePlayer.player.currentTime) * 1000;
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsNSInteger:currentTime];
     } else {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"no player available"];
