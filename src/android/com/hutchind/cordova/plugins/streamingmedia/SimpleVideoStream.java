@@ -45,7 +45,7 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
  getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 		Bundle b = getIntent().getExtras();
 		mVideoUrl = b.getString("mediaUrl");
-		start = b.getString("start",0);
+		start = b.getString("start","0");
 		mShouldAutoClose = b.getBoolean("shouldAutoClose", true);
 		mControls = b.getBoolean("controls", true);
 
