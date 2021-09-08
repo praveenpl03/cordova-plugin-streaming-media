@@ -40,18 +40,21 @@ cordova plugin add https://github.com/nchutchind/cordova-plugin-streaming-media
   var options = {
     successCallback: function(res) {
       console.log("Video was closed without error.");
-      console.log(res); // {"duration":"19641"} a json returned for resume video later if req
+      console.log(res); // {"currentTime":"19641"} on android an object is returned with current time
     },
     errorCallback: function(errMsg) {
       console.log(errMsg); 
-      // {"duration":"19641","message": "Error Message"} a json content
+      // {"message": "Error Message"}
     },
     orientation: 'landscape',
     shouldAutoClose: true,  // true(default)/false
-    controls: true,// true(default)/false. Used to hide controls on fullscreen
-    start: 0// Seekto in miliseconds 0(Default)/ time in miliseconds (Android Only)
+    controls: true,// true(default)/false. Used to hide controls on fullscreen,
+    start: 0 // Seek in milliseconds 0(default)/milliseconds
   };
   window.plugins.streamingMedia.playVideo(videoUrl, options);
+
+  // Get current time (iOS only)
+  window.plugins.streamingMedia.getCurrentTime();  
 
 
   var audioUrl = STREAMING_AUDIO_URL;

@@ -11,6 +11,7 @@
 - (void)setBackgroundColor:(NSString *)color;
 - (void)setImage:(NSString*)imagePath withScaleType:(NSString*)imageScaleType;
 - (UIImage*)getImage: (NSString *)imageName;
+- (void)getCurrentTime:(CDVInvokedUrlCommand *) command;
 - (void)startPlayer:(NSString*)uri;
 - (void)moviePlayBackDidFinish:(NSNotification*)notification;
 - (void)cleanup;
@@ -23,6 +24,7 @@
     UIColor *backgroundColor;
     UIImageView *imageView;
     BOOL initFullscreen;
+    NSInteger start;
     NSString *mOrientation;
     NSString *videoType;
     AVPlayer *movie;
@@ -41,6 +43,11 @@ NSString * const DEFAULT_IMAGE_SCALE = @"center";
         shouldAutoClose = [[options objectForKey:@"shouldAutoClose"] boolValue];
     } else {
         shouldAutoClose = YES;
+    }
+    if (![options isKindOfClass:[NSNull class]] && [options objectForKey:@"start"]) {
+        start = [[options objectForKey:@"start"] integerValue];
+    } else {
+        start = 0;
     }
     if (![options isKindOfClass:[NSNull class]] && [options objectForKey:@"bgColor"]) {
         [self setBackgroundColor:[options objectForKey:@"bgColor"]];
@@ -222,6 +229,11 @@ NSString * const DEFAULT_IMAGE_SCALE = @"center";
     [moviePlayer setPlayer:movie];
     [moviePlayer setShowsPlaybackControls:controls];
     [moviePlayer setUpdatesNowPlayingInfoCenter:YES];
+    if (start > 0) {
+        CMTime time = CMTimeMake(start,1000);
+        [movie seekToTime:time];
+        //moviePlayer.player.seek(to: CMTime(value: CMTimeValue(start), timescale: 1000))
+    }
     
     if(@available(iOS 11.0, *)) { [moviePlayer setEntersFullScreenWhenPlaybackBegins:YES]; }
     
@@ -344,6 +356,18 @@ NSString * const DEFAULT_IMAGE_SCALE = @"center";
         NSLog(@"did reinstate playerlayer");
         [moviePlayer setPlayer:movie];
     }
+}
+
+- (void)getCurrentTime:(CDVInvokedUrlCommand *) command {
+    CDVPluginResult* pluginResult;
+    
+    if (moviePlayer.player != nil) {
+        NSInteger currentTime = (NSInteger)CMTimeGetSeconds(moviePlayer.player.currentTime) * 1000;
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsNSInteger:currentTime];
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"no player available"];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) moviePlayBackDidFinish:(NSNotification*)notification {

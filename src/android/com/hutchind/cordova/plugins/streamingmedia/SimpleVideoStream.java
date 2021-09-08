@@ -33,7 +33,7 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 	private MediaController mMediaController = null;
 	private ProgressBar mProgressBar = null;
 	private String mVideoUrl;
-	private String start;
+	private Integer start;
 	private Boolean mShouldAutoClose = true;
 	private boolean mControls;
 
@@ -45,7 +45,7 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
  getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 		Bundle b = getIntent().getExtras();
 		mVideoUrl = b.getString("mediaUrl");
-		start = b.getString("start",0);
+		start = b.getInt("start",0);
 		mShouldAutoClose = b.getBoolean("shouldAutoClose", true);
 		mControls = b.getBoolean("controls", true);
 
@@ -118,14 +118,14 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 		}
 	};
 
-	@Override
+@Override
 	public void onPrepared(MediaPlayer mp) {
-		Log.d(TAG, "Stream is prepared");
+		Log.d(TAG, "Stream is prepared : " + start);
 		mMediaPlayer = mp;
 		mMediaPlayer.setOnBufferingUpdateListener(this);
 		mVideoView.requestFocus();
+		mVideoView.seekTo(start);
 		mVideoView.start();
-		mVideoView.seekTo(Integer.valueOf(start));
 		mVideoView.postDelayed(checkIfPlaying, 0);
 	}
 
@@ -152,7 +152,7 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 	
 		JSONObject dataToSend = new JSONObject();
 		 try {
-       	dataToSend.put("duration", String.valueOf(mVideoView.getCurrentPosition()));
+       	dataToSend.put("currentTime", String.valueOf(mVideoView.getCurrentPosition()));
 		dataToSend.put("message", message);
   	 	 } catch (Exception e) {
         e.printStackTrace();
